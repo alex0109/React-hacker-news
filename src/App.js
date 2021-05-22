@@ -1,11 +1,14 @@
 import React from "react";
 import "./App.css";
 
-const DEFAULT_QUERY = "redux";
+const DEFAULT_QUERY = "Search smth";
+const DEFAULT_HPP = '5';
 
 const PATH_BASE = "https://hn.algolia.com/api/v1";
 const PATH_SEARCH = "/search";
 const PARAM_SEARCH = "query=";
+const PARAM_PAGE = "page=";
+const PARAM_HPP = 'hitsPerPage=';
 
 const isSearched = (searchTerm) => (item) =>
   item.title.toLowerCase().includes(searchTerm.toLowerCase());
@@ -22,20 +25,39 @@ class App extends React.Component {
 
     // Bind methods of class(if use funcs instead methods u can skip binds )
     this.setSearchTopStories = this.setSearchTopStories.bind(this);
+    this.fetchSearchTopStories = this.fetchSearchTopStories.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
+    this.onSearchSubmit = this.onSearchSubmit.bind(this);
     this.onDismiss = this.onDismiss.bind(this);
   }
 
   setSearchTopStories(result) {
-    this.setState({ result });
+    const { hits, page } = result;
+    const oldHits = page !== 0 ? this.state.result.hits : [];
+    const updatedHits = [...oldHits, ...hits];
+    this.setState({
+      result: { hits: updatedHits, page },
+    });
+  }
+
+  onSearchSubmit(event) {
+    const { searchTerm } = this.state;
+    this.fetchSearchTopStories(searchTerm);
+    event.preventDefault(); // Для предотвращения нативного поведения браузера
+  }
+
+  fetchSearchTopStories(searchTerm, page = 0) {
+    fetch(
+      `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`
+    )
+      .then((response) => response.json())
+      .then((result) => this.setSearchTopStories(result))
+      .catch((error) => error);
   }
 
   componentDidMount() {
     const { searchTerm } = this.state;
-    fetch(`${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}`)
-      .then((response) => response.json())
-      .then((result) => this.setSearchTopStories(result))
-      .catch((error) => error);
+    this.fetchSearchTopStories(searchTerm);
   }
 
   // Delete article
@@ -54,6 +76,7 @@ class App extends React.Component {
 
   render() {
     const { searchTerm, result } = this.state;
+    const page = (result && result.page) || 0;
 
     if (!result) {
       return null;
@@ -62,37 +85,41 @@ class App extends React.Component {
     return (
       <div className="page">
         <div className="interactions">
-          <Search value={searchTerm} onChange={this.onSearchChange}>
-            Search
-          </Search>
-        </div>
-        {result && (
-          <Table
-            list={result.hits}
-            pattern={searchTerm}
-            onDismiss={this.onDismiss}
+          <Search
+            value={searchTerm}
+            onChange={this.onSearchChange}
+            onSubmit={this.onSearchSubmit}
           />
-        )}
+        </div>
+        {result && <Table list={result.hits} onDismiss={this.onDismiss} />}
+        <div className="interactions">
+          <Button
+            onClick={() => this.fetchSearchTopStories(searchTerm, page + 1)}
+          >
+            Больше историй
+          </Button>
+        </div>
       </div>
     );
   }
 }
 
 // Search stainless component
-const Search = ({ value, onChange, children }) => {
+const Search = ({ value, onChange, children, onSubmit }) => {
   return (
-    <form className="form">
-      {children}
+    <form className="form" onSubmit={onSubmit}>
+      {/* {children} */}
       <input type="text" value={value} onChange={onChange} />
+      <button type="submit">Search</button>
     </form>
   );
 };
 
 // Table stainless component
-const Table = ({ list, pattern, onDismiss }) => {
+const Table = ({ list, onDismiss }) => {
   return (
     <div className="table">
-      {list.filter(isSearched(pattern)).map((item) => (
+      {list.map((item) => (
         <div key={item.objectID} className="table-row">
           <span>
             <a href={item.url}>| {item.title} |</a>
