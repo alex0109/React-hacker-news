@@ -133,15 +133,25 @@ class App extends React.Component {
 }
 
 // Search stainless component
-const Search = ({ value, onChange, children, onSubmit }) => {
-  return (
-    <form className="form" onSubmit={onSubmit}>
-      {/* {children} */}
-      <input type="text" value={value} onChange={onChange} />
-      <button type="submit">Search</button>
-    </form>
-  );
-};
+class Search extends Comment {
+
+  componentDidMount() {
+    if(this.input) {
+      this.input.focus();
+    }
+  }
+
+  render() {
+    const { value, onChange, onSubmit, children } = this.props;
+    return(
+      <form className="form" onSubmit={onSubmit}>
+        {/* {children} */}
+        <input type="text" value={value} onChange={onChange} ref={(node) => { this.input = node; }}/>
+        <button type="submit">Search</button>
+      </form>
+    )
+  }
+} 
 
 // Table stainless component
 const Table = ({ list, onDismiss }) => {
@@ -179,3 +189,5 @@ const Button = ({ onClick, className = "", children }) => {
 };
 
 export default App;
+
+export { Button, Search, Table };

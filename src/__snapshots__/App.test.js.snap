@@ -1,0 +1,142 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`App есть корректный снимок 1`] = `
+<div
+  className="page"
+>
+  <div
+    className="interactions"
+  >
+    <form
+      className="form"
+      onSubmit={[Function]}
+    >
+      <input
+        onChange={[Function]}
+        type="text"
+        value="Search smth"
+      />
+      <button
+        type="submit"
+      >
+        Search
+      </button>
+    </form>
+  </div>
+  <div
+    className="table"
+  />
+  <div
+    className="interactions"
+  >
+    <button
+      className=""
+      onClick={[Function]}
+      type="button"
+    >
+      Больше историй
+    </button>
+  </div>
+</div>
+`;
+
+exports[`Button есть корректный снимок 1`] = `
+<button
+  className=""
+  type="button"
+>
+  Дай мне больше
+</button>
+`;
+
+exports[`Search есть корректный снимок 1`] = `
+<form
+  className="form"
+>
+  <input
+    type="text"
+  />
+  <button
+    type="submit"
+  >
+    Search
+  </button>
+</form>
+`;
+
+exports[`Table есть корректный снимок 1`] = `
+<div
+  className="table"
+>
+  <div
+    className="table-row"
+  >
+    <span>
+      <a>
+        | 
+        1
+         |
+      </a>
+    </span>
+    <span>
+      | Author 
+      1
+       |
+    </span>
+    <span>
+      |Comments 
+      1
+      |
+    </span>
+    <span>
+      |Points 
+      2
+      |
+    </span>
+    <span>
+      <button
+        className="button-inline"
+        onClick={[Function]}
+        type="button"
+      >
+        Отбросить
+      </button>
+    </span>
+  </div>
+  <div
+    className="table-row"
+  >
+    <span>
+      <a>
+        | 
+        2
+         |
+      </a>
+    </span>
+    <span>
+      | Author 
+      2
+       |
+    </span>
+    <span>
+      |Comments 
+      1
+      |
+    </span>
+    <span>
+      |Points 
+      2
+      |
+    </span>
+    <span>
+      <button
+        className="button-inline"
+        onClick={[Function]}
+        type="button"
+      >
+        Отбросить
+      </button>
+    </span>
+  </div>
+</div>
+`;
