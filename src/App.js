@@ -26,6 +26,7 @@ class App extends React.Component {
       searchKey: '',
       searchTerm: DEFAULT_QUERY,
       error: null,
+      isLoading: false
     };
 
     // Bind methods of class(if use arrow funcs instead methods u can skip binds )
@@ -50,6 +51,7 @@ class App extends React.Component {
     const updatedHits = [...oldHits, ...hits];
     this.setState({
       results: { ...result, [searchKey]: { hits: updatedHits, page} },
+      isLoading: false
     });
   }
 
@@ -66,6 +68,7 @@ class App extends React.Component {
   }
 
   fetchSearchTopStories(searchTerm, page = 0) {
+    this.setState({ isLoading: true });
     axios(
       `${PATH_BASE}${PATH_SEARCH}?${PARAM_SEARCH}${searchTerm}&${PARAM_PAGE}${page}&${PARAM_HPP}${DEFAULT_HPP}`
     )
@@ -103,7 +106,7 @@ class App extends React.Component {
   }
 
   render() {
-    const { searchTerm, results, searchKey, error } = this.state;
+    const { searchTerm, results, searchKey, error, isLoading } = this.state;
     const page = (results && results[searchKey] && results[searchKey].page) || 0;
 
     const list = (results && results[searchKey] && results[searchKey].hits) || [];
@@ -123,9 +126,11 @@ class App extends React.Component {
         </div>
         { error ? <div className="interactions"><p>Something went wrong</p></div> : <Table list={list} onDismiss={this.onDismiss} />}
         <div className="interactions">
-          <Button onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}>
-            Больше историй
-          </Button>
+          { isLoading ? 
+            <Loading /> : 
+            <Button onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}>
+              Больше историй
+            </Button>}
         </div>
       </div>
     );
@@ -187,6 +192,11 @@ const Button = ({ onClick, className = "", children }) => {
     </button>
   );
 };
+
+//Loading stainless component
+const Loading = () => {
+  <div>Загрузка...</div>
+}
 
 export default App;
 
