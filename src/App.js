@@ -126,11 +126,9 @@ class App extends React.Component {
         </div>
         { error ? <div className="interactions"><p>Something went wrong</p></div> : <Table list={list} onDismiss={this.onDismiss} />}
         <div className="interactions">
-          { isLoading ? 
-            <Loading /> : 
-            <Button onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}>
-              Больше историй
-            </Button>}
+         <ButtonWithLoading isLoading={isLoading} onClick={() => this.fetchSearchTopStories(searchKey, page + 1)}>
+            Больше историй
+         </ButtonWithLoading>
         </div>
       </div>
     );
@@ -138,7 +136,7 @@ class App extends React.Component {
 }
 
 // Search stainless component
-class Search extends Comment {
+class Search extends React.Component {
 
   componentDidMount() {
     if(this.input) {
@@ -150,9 +148,8 @@ class Search extends Comment {
     const { value, onChange, onSubmit, children } = this.props;
     return(
       <form className="form" onSubmit={onSubmit}>
-        {/* {children} */}
         <input type="text" value={value} onChange={onChange} ref={(node) => { this.input = node; }}/>
-        <button type="submit">Search</button>
+        <button type="submit">{children}</button>
       </form>
     )
   }
@@ -195,8 +192,15 @@ const Button = ({ onClick, className = "", children }) => {
 
 //Loading stainless component
 const Loading = () => {
-  <div>Загрузка...</div>
+  return <div>Загрузка...</div>
 }
+
+//HOC withLoading
+const withLoading = (Component) => (props) => {
+  props.isLoading ? <Loading /> : <Component {...props} />
+}
+
+const ButtonWithLoading = withLoading(Button);
 
 export default App;
 
